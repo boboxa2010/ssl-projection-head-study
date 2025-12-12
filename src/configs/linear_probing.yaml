@@ -1,0 +1,35 @@
+defaults:
+  - model: resnet
+  - writer: wandb
+  - metrics: accuracy
+  - datasets: stl_supervised
+  - dataloader: main
+  - transforms: main
+  - _self_
+optimizer:
+  _target_: torch.optim.SGD
+  lr: 1e-1
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  _target_: torch.optim.lr_scheduler.ConstantLR
+  factor: 1.0
+loss_function:
+  _target_: src.loss.CrossEntropyLoss
+trainer:
+  log_step: 50
+  n_epochs: 50
+  epoch_len: null
+  device_tensors: ["img", "labels"]
+  resume_from: null
+  device: auto
+  override: False
+  monitor: "max test_Accuracy"
+  save_period: 5
+  early_stop: ${trainer.n_epochs}
+  save_dir: "saved"
+  seed: 1
+  linear_probing: True
+  from_pretrained: null
+
+

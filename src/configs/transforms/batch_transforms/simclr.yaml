@@ -1,0 +1,33 @@
+train:
+  img:
+    _target_: torch.nn.Sequential
+    _args_:
+      - _target_: src.transforms.LightlySingleView
+        view_index: 0
+        transform:
+          _target_: lightly.transforms.SimCLRTransform
+          input_size: 96
+          cj_prob: 0.8
+          cj_strength: 0.5
+          cj_bright: 0.8
+          cj_contrast: 0.8
+          cj_sat: 0.8
+          cj_hue: 0.2
+          min_scale: 0.08
+          gaussian_blur: 0.2
+          random_gray_scale: 0.1
+          hf_prob: 0.5
+          vf_prob: 0.0
+          rr_prob: 0.0
+          rr_degrees: null
+      - _target_: torchvision.transforms.v2.Normalize
+        mean: [0.5, ]
+        std: [0.5, ]
+
+inference:
+  img:
+    _target_: torch.nn.Sequential
+    _args_:
+      - _target_: torchvision.transforms.v2.Normalize
+        mean: [0.5, ]
+        std: [0.5, ]

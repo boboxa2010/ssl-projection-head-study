@@ -1,0 +1,10 @@
+train:
+  _target_: src.datasets.RotatedSTLDataset
+  name: "unlabeled"
+  angles: [0, 90, 180, 270]
+  instance_transforms: ${transforms.instance_transforms.train}
+test:
+  _target_: src.datasets.RotatedSTLDataset
+  name: "test"
+  angles: [0, 90, 180, 270]
+  instance_transforms: ${transforms.instance_transforms.inference}
