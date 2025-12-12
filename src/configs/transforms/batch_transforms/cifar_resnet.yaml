@@ -1,3 +1,4 @@
+# TODO calclulate datasets stats for normalization
 train:
   img: # name of the tensor on which we apply transform
     _target_: torch.nn.Sequential # to apply several transforms sequentially

@@ -1,6 +1,6 @@
 defaults:
   - model: resnet
-  - writer: wandb
+  - writer: cometml
   - metrics: accuracy
   - datasets: stl_supervised
   - dataloader: main

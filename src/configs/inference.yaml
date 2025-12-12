@@ -1,13 +1,13 @@
 defaults:
-  - model: baseline
+  - model: resnet
   - metrics: accuracy
-  - datasets: mnist_test # we do not want to run inference on training data
+  - datasets: mnist_test
   - dataloader: main
   - transforms: main
   - _self_
 inferencer:
-  device_tensors: ["img", "labels"] # which tensors should be on device (ex. GPU)
-  device: auto # device name or "auto"
-  save_path: "mnist" # any name here, can be a dataset name
+  device_tensors: ["img", "labels"]
+  device: auto
+  save_path: null
   seed: 1
-  from_pretrained: "saved/model_best.pth" # path to the pretrained model
+  from_pretrained: null

@@ -1,3 +1,4 @@
+# TODO fix this, probably bug with apply augs on tensor instead of image)
 train:
   img:
     _target_: torch.nn.Sequential
