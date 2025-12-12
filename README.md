@@ -1,4 +1,4 @@
-# SSL Hometask 1
+# Investigating the Benefits of Projection Head for Representation Learning
 
 <p align="center">
   <a href="#about">About</a> •
@@ -11,7 +11,7 @@
 
 ## About
 
-This is fork of a [PyTorch Project Template](https://github.com/Blinorot/pytorch_project_template). The task is to do image classification using SSL methods. We use [STL10](https://cs.stanford.edu/~acoates/stl10/) and [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) datasets.
+This is fork of a [PyTorch Project Template](https://github.com/Blinorot/pytorch_project_template). A study and experimental investigation of projection heads in self-supervised learning, reproducing and extending the results of the paper [Investigating the Benefits of Projection Head for Representation Learning](https://arxiv.org/abs/2403.11391v1)
 
 ## Installation
 
