@@ -60,7 +60,7 @@ class RotatedSTLDataset(BaseDataset):
         data_path.mkdir(exist_ok=True, parents=True)
 
         transform = torchvision.transforms.ToTensor()
-        mnist_data = torchvision.datasets.STL10(
+        stl_data = torchvision.datasets.STL10(
             str(data_path), split=name, download=True, transform=transform
         )
 
@@ -69,9 +69,9 @@ class RotatedSTLDataset(BaseDataset):
         # with some small changes in BaseDataset, torchvision dataset
         # can be used as is without this wrapper
         # but we use wrapper
-        for i in tqdm(range(len(mnist_data))):
+        for i in tqdm(range(len(stl_data))):
             # create dataset
-            img, _ = mnist_data[i]
+            img, _ = stl_data[i]
 
             rotated_img, rotated_label = self._generate_rotation(img)
 
