@@ -576,7 +576,9 @@ class BaseTrainer:
         else:
             state_dict = checkpoint
         
-        if self.config.trainer.get("linear_probing", False) or self.config.trainer.get("finetune", False):
+
+        
+        if self.config.get("trainer") is not None and (self.cfg_trainer.get("linear_probing", False) or self.cfg_trainer.trainer.get("finetune", False)):
             state_dict = {
                 k: v for k, v in state_dict.items() 
                 if not k.startswith('fc.') 
