@@ -110,7 +110,7 @@ class BaseDataset(Dataset):
     @staticmethod
     def _filter_records_from_dataset(
         index: list,
-    ) -> list:
+    ):
         """
         Filter some of the elements from the dataset depending on
         some condition.

@@ -50,7 +50,7 @@ class STLDataset(BaseDataset):
         data_path.mkdir(exist_ok=True, parents=True)
 
         transform = torchvision.transforms.ToTensor()
-        mnist_data = torchvision.datasets.STL10(
+        stl_data = torchvision.datasets.STL10(
             str(data_path), split=name, download=True, transform=transform
         )
 
@@ -59,9 +59,9 @@ class STLDataset(BaseDataset):
         # with some small changes in BaseDataset, torchvision dataset
         # can be used as is without this wrapper
         # but we use wrapper
-        for i in tqdm(range(len(mnist_data))):
+        for i in tqdm(range(len(stl_data))):
             # create dataset
-            img, label = mnist_data[i]
+            img, label = stl_data[i]
 
             save_dict = {"tensor": img}
             save_path = data_path / f"{i:06}.safetensors"

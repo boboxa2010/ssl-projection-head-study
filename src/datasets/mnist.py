@@ -1,5 +1,6 @@
 import shutil
 
+import numpy as np
 import safetensors
 import safetensors.torch
 import torchvision
@@ -7,32 +8,21 @@ from tqdm.auto import tqdm
 
 from src.datasets.base_dataset import BaseDataset
 from src.utils.io_utils import ROOT_PATH, read_json, write_json
-from src.datasets.data_utils import sparse2coarse
 
 
-class CIFARDataset(BaseDataset):
+class MNISTDataset(BaseDataset):
     """
-    CIFAR datasets family
+    MNIST dataset
 
-    list of available datasets:
-    - CIFAR10
-    - CIFAR100
-    - CIFAR100(coarse)
-
-    https://www.cs.toronto.edu/~kriz/cifar.html
+    https://yann.lecun.com/exdb/mnist/
     """
 
-    def __init__(self, dataset: str, name="train", *args, **kwargs):
+    def __init__(self, name="train", *args, **kwargs):
         """
         Args:
             name (str): partition name
         """
-        if dataset not in ("cifar10", "cifar100", "cifar100coarse"):
-            raise ValueError(f"Invalid dataset provided: {dataset}")
-    
-        self.dataset = dataset
-
-        index_path = ROOT_PATH / "data" / self.dataset / name / "index.json"
+        index_path = ROOT_PATH / "data" / "mnist" / name / "index.json"
 
         # each nested dataset class must have an index field that
         # contains list of dicts. Each dict contains information about
@@ -58,42 +48,31 @@ class CIFARDataset(BaseDataset):
                 such as label and object path.
         """
         index = []
-        data_path = ROOT_PATH / "data" / self.dataset / name
+        data_path = ROOT_PATH / "data" / "mnist" / name
         data_path.mkdir(exist_ok=True, parents=True)
 
         transform = torchvision.transforms.ToTensor()
-
-        dataset = torchvision.datasets.CIFAR10 if self.dataset == "cifar10" else torchvision.datasets.CIFAR100
-
-        cifar_data = dataset(
+        mnist_data = torchvision.datasets.MNIST(
             str(data_path), train=(name == "train"), download=True, transform=transform
         )
 
-        if self.dataset == "cifar100coarse":
-            cifar_data.targets = sparse2coarse(cifar_data.targets)
-        
-        print(set(list(cifar_data.targets)))
-
-        print(f"Parsing {self.dataset} metadata for part {name}...")
+        print(f"Parsing MNIST Dataset metadata for part {name}...")
         # wrapper over torchvision dataset to get individual objects
         # with some small changes in BaseDataset, torchvision dataset
         # can be used as is without this wrapper
         # but we use wrapper
-        for i in tqdm(range(len(cifar_data))):
+        for i in tqdm(range(len(mnist_data))):
             # create dataset
-            img, label = cifar_data[i]
+            img, label = mnist_data[i]
 
             save_dict = {"tensor": img}
             save_path = data_path / f"{i:06}.safetensors"
             safetensors.torch.save_file(save_dict, save_path)
 
             # parse dataset metadata and append it to index
-            index.append({"path": str(save_path), "label": int(label)})
+            index.append({"path": str(save_path), "label": label})
 
-        if self.dataset == "cifar10":
-            shutil.rmtree(data_path / "cifar-10-batches-py")  # remove
-        else:
-            shutil.rmtree(data_path / "cifar-100-python")  # remove
+        shutil.rmtree(data_path / "MNIST")  # remove
 
         # write index to disk
         write_json(index, str(data_path / "index.json"))

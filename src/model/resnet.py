@@ -10,6 +10,7 @@ class ResNetModel(nn.Module):
     def __init__(
             self,
             n_class: int,
+            in_channels: int = 3,
             subsampling_kernel: int = 3,
             subsampling_stride: int = 1,
         ):
@@ -24,7 +25,7 @@ class ResNetModel(nn.Module):
         self.model = torchvision.models.resnet18()
 
         self.model.conv1 = nn.Conv2d(
-            in_channels=self.model.conv1.in_channels,
+            in_channels=in_channels,
             out_channels=self.model.conv1.out_channels,
             kernel_size=subsampling_kernel,
             stride=subsampling_stride,
