@@ -56,6 +56,9 @@ class BaseTrainer:
                 should be applied on the whole batch. Depend on the
                 tensor name.
             use_amp (bool): enables automatic mixed presicion training
+            use_amp_bf16 (bool): enables amp training in bf16
+            use_ema (bool): enables exponential moving average
+
         """
         self.is_train = True
 
@@ -74,7 +77,21 @@ class BaseTrainer:
         self.lr_scheduler = lr_scheduler
         self.batch_transforms = batch_transforms
 
-        self.scaler = torch.cuda.amp.GradScaler(self.device, enabled=use_amp)
+        self.use_amp = config.trainer.get("amp", False)
+        self.use_amp_bf16 = config.trainer.get("amp_bf16", False)
+        self.scaler = torch.cuda.amp.GradScaler(
+            enabled=(self.use_amp or self.use_amp_bf16)
+        )
+        self.amp_dtype = torch.bfloat16 if self.use_amp_bf16 else torch.float16
+
+        self.use_ema = config.trainer.get("ema", False)
+        if self.use_ema:
+            self.ema_coef = config.trainer.get("ema_coef", 0.9999)
+            self.model = torch.optim.swa_utils.AveragedModel(
+                self.model,
+                multi_avg_fn=torch.optim.swa_utils.get_ema_multi_avg_fn(self.ema_coef),
+                device=self.device,
+            )
 
         # define dataloaders
         self.train_dataloader = dataloaders["train"]
