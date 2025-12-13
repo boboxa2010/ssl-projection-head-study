@@ -3,6 +3,7 @@ import torchvision
 from torch import nn
 from .resnet import ResNetImg32
 from .heads import UniversalProjectionHead
+from .ViT import ViTImg32
 
 class SimCLR(nn.Module):
     """
@@ -11,20 +12,22 @@ class SimCLR(nn.Module):
 
     def __init__(
         self, 
-        input_dim: int = 512, 
-        hidden_dim: int = 512, 
-        output_dim: int = 128, # only in MLP
-        encoder: str = 'ResNet32', # maybe wil add ViT in the future?
+        encoder: str = 'ResNet32', # or ViT32
         mode: str = 'mlp',  # mlp or fixed
         kappa: float = None # only in fixed head
     ):
         super().__init__()
         if encoder == 'ResNet32':
             self.encoder = ResNetImg32()
+            input_dim = 512
+        elif encoder == 'ViT32':
+            self.encoder = ViTImg32()
+            input_dim = 768
+            #output - 768 maybe change ViT inside more?
         else:
             raise ValueError(f"Unknown encoder: {encoder}")
         
-        self.projection_head = UniversalProjectionHead(input_dim, hidden_dim, output_dim, mode, kappa)
+        self.projection_head = UniversalProjectionHead(input_dim, input_dim, 128, mode, kappa)
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         features = self.encoder(x) # h
@@ -59,11 +62,8 @@ class ProjectedClassifier(nn.Module):
     """
     def __init__(
         self, 
-        input_dim: int = 512, 
-        hidden_dim: int = 512, 
-        output_dim: int = 128, # only in MLP
         n_classes = None, # In CIFAR-100 20 super classes but None if SCL task
-        encoder: str = 'ResNet32', # maybe wil add ViT in the future?
+        encoder: str = 'ResNet32', # or ViT32
         mode: str = 'mlp',  # mlp or fixed
         kappa: float = None # only in fixed head
     ):
@@ -71,16 +71,21 @@ class ProjectedClassifier(nn.Module):
         
         if encoder == 'ResNet32':
             self.encoder = ResNetImg32()
+            input_dim = 512
+        elif encoder == 'ViT32':
+            self.encoder = ViTImg32()
+            #output - 768 maybe change ViT inside more?
+            input_dim = 768
         else:
             raise ValueError(f"Unknown encoder: {encoder}")
         
-        self.projection_head = UniversalProjectionHead(input_dim, hidden_dim, output_dim, mode, kappa)
+        self.projection_head = UniversalProjectionHead(input_dim, input_dim, 128, mode, kappa)
 
         if n_classes:
             if mode == 'mlp':
                 classifier_input = self.projection_head.output_dim # 128
             else:
-                classifier_input = input_dim # 512 (fixed head keeps dim)
+                classifier_input = input_dim # 512 or 768 (fixed head keeps dim)
             
             self.classifier = nn.Linear(classifier_input, n_classes)
         
