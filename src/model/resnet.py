@@ -14,6 +14,7 @@ class ResNetModel(nn.Module):
             in_channels: int = 3,
             subsampling_kernel: int = 3,
             subsampling_stride: int = 1,
+            disable_subsampling_max_pool: bool = False,
         ):
         """
         Args:
@@ -24,6 +25,9 @@ class ResNetModel(nn.Module):
         super().__init__()
 
         self.model = torchvision.models.resnet18()
+        
+        if disable_subsampling_max_pool:
+            self.model.maxpool = nn.Identity()
 
         self.model.conv1 = nn.Conv2d(
             in_channels=in_channels,
