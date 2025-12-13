@@ -32,10 +32,10 @@ class SimCLRLoss(nn.Module):
         # Shape: [2*Batch_Size, Projection_Dim]
         z = torch.cat([z_i_norm, z_j_norm], dim=0)
 
-        # Shape: (2*Batch_Size, 2*Batch_Size)
+        # Shape: [2*Batch_Size, 2*Batch_Size]
         similarity_matrix = torch.matmul(z, z.T)
 
-        # Shape: (2*Batch_Size, 2*Batch_Size)
+        # Shape: [2*Batch_Size, 2*Batch_Size]
         mask = torch.eye(2 * batch_size, dtype=torch.bool, device=z.device)
         
         similarity_matrix = similarity_matrix.masked_fill(mask, -float('inf'))
