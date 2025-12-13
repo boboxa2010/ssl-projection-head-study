@@ -36,9 +36,7 @@ class Trainer(BaseTrainer):
             metric_funcs = self.metrics["train"]
             self.optimizer.zero_grad()
 
-        with torch.cuda.amp.autocast(
-            dtype=self.amp_dtype, enabled=self.use_amp or self.use_amp_bf16
-        ):
+        with torch.autocast(device_type=self.device, dtype=torch.float16, enabled=self.scaler.is_enabled()):
             outputs = self.model(**batch)
             batch.update(outputs)
 
@@ -49,14 +47,9 @@ class Trainer(BaseTrainer):
             self.scaler.scale(batch["loss"]).backward()
             
             self.scaler.unscale_(self.optimizer)
-
             self._clip_grad_norm()
-            self.train_metrics.update("grad_norm", self._get_grad_norm())
 
             self.scaler.step(self.optimizer)
-            self.scaler.update()
-
-            self.optimizer.zero_grad()
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
 
