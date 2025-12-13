@@ -5,7 +5,8 @@ Bellow all experiments from the original paper are written with how it should li
 ``` model = ProjectedClassifier(n_classes = 20, encoder = 'ResNet32', mode = 'mlp') ```
 ``` criterion = CrossEntropyLoss() ```
 
-```Optimizer: SGD
+```
+Optimizer: SGD
 LR: 0.1
 Momentum: 0.9
 Weight Decay: 5e-4
@@ -18,7 +19,8 @@ Epochs: 200
 ``` model = ProjectedClassifier(n_classes = 20, encoder = 'ResNet32', mode = 'fixed', kappa = 1.2) ```
 ``` criterion = CrossEntropyLoss() ```
 
-```Optimizer: SGD
+```
+Optimizer: SGD
 LR: 0.1
 Momentum: 0.9
 Weight Decay: 5e-4
@@ -32,7 +34,8 @@ Kappa: 1.2
 ``` model = ProjectedClassifier(encoder = 'ResNet32', mode = 'mlp') ```
 ``` criterion = SupConLoss(temperature = 0.5) ```
 
-```Optimizer: SGD
+```
+Optimizer: SGD
 LR: 0.1
 Momentum: 0.9
 Weight Decay: 1e-6
@@ -45,7 +48,8 @@ Epochs: 400
 ``` model = ProjectedClassifier(encoder = 'ResNet32', mode = 'fixed', kappa = 1.5) ```
 ``` criterion = SupConLoss(temperature = 0.5) ```
 
-```Optimizer: SGD
+```
+Optimizer: SGD
 LR: 0.1
 Momentum: 0.9
 Weight Decay: 1e-6
@@ -59,7 +63,8 @@ Kappa: 1.5
 ``` model = SimCLR(encoder = 'ResNet32', mode = 'mlp') ```
 ``` criterion = SimCLRLoss(temperature=0.5) ```
 
-```Optimizer: Adam
+```
+Optimizer: Adam
 LR: 0.001 (1e-3)
 Weight Decay: 1e-6
 Batch Size: 512
@@ -72,7 +77,8 @@ Temperature: 0.5
 ``` model = SimCLR(encoder = 'ResNet32', mode = 'fixed', kappa = 1.5) ```
 ``` criterion = SimCLRLoss(temperature=0.5) ```
 
-```Optimizer: Adam
+```
+Optimizer: Adam
 LR: 0.001 (1e-3)
 Weight Decay: 1e-6
 Batch Size: 512
