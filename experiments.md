@@ -18,13 +18,14 @@ Epochs: 200
 ``` model = ProjectedClassifier(n_classes = 20, encoder = 'ResNet32', mode = 'fixed', kappa = 1.2) ```
 ``` criterion = CrossEntropyLoss() ```
 
-``` Optimizer: SGD
+```Optimizer: SGD
 LR: 0.1
 Momentum: 0.9
 Weight Decay: 5e-4
 Batch Size: 128
 Epochs: 200
-Kappa: 1.2 ```
+Kappa: 1.2 
+```
 
 3. SCL experiment: Resnet pretrain on Cifar100 super classes with contrastive SCL loss and MLP proj head:
 
