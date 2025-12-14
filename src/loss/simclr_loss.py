@@ -11,7 +11,7 @@ class SimCLRLoss(nn.Module):
         super().__init__()
         self.temperature = temperature
 
-    def forward(self, z_i: torch.Tensor, z_j: torch.Tensor) -> dict:
+    def forward(self, z_i: torch.Tensor, z_j: torch.Tensor, **batch) -> dict:
         """
         Calculates the contrastive loss between two views of the batch.
 
