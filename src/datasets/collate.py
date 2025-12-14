@@ -26,8 +26,8 @@ def collate_fn(dataset_items: list[dict]):
         [elem["aug1"].unsqueeze(0) for elem in dataset_items], dim=0
     )
 
-    result_batch["aug1"] = torch.cat(
-        [elem["aug1"].unsqueeze(0) for elem in dataset_items], dim=0
+    result_batch["aug2"] = torch.cat(
+        [elem["aug2"].unsqueeze(0) for elem in dataset_items], dim=0
     )
 
     return result_batch
