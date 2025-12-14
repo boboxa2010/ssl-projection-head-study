@@ -85,6 +85,10 @@ class Trainer(BaseTrainer):
         if mode == "train":  # the method is called only every self.log_step steps
             img = batch["img"][0].detach().cpu().numpy().transpose(1, 2, 0)
             self.writer.add_image("image", img)
+            aug1 = batch["aug1"][0].detach().cpu().numpy().transpose(1, 2, 0)
+            self.writer.add_image("aug1", aug1)
+            aug2 = batch["aug2"][0].detach().cpu().numpy().transpose(1, 2, 0)
+            self.writer.add_image("aug2", aug2)
         else:
             img = batch["img"][0].detach().cpu().numpy().transpose(1, 2, 0)
             self.writer.add_image("image", img)
