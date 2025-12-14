@@ -1,5 +1,4 @@
 import torch
-import torchvision
 from torch import nn
 
 class UniversalProjectionHead(nn.Module):
@@ -14,7 +13,7 @@ class UniversalProjectionHead(nn.Module):
         hidden_dim: int = 512, 
         output_dim: int = 128, # only in MLP
         mode: str = 'mlp',  # mlp or fixed
-        kappa: float = None # only in fixed head
+        kappa: float | None = None # only in fixed head
     ):
         super().__init__()
         self.mode = mode
@@ -41,11 +40,11 @@ class UniversalProjectionHead(nn.Module):
             raise ValueError(f"Unknown mode: {mode}")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # here not a dict because it's only a component in stacked - Boboxa, please check
         if self.mode == 'mlp':
             # [Batch_size, 128]
             return self.net(x)
-        
         elif self.mode == 'fixed':
             # [Batch_size, 512]
             return x * self.scales
+        else:
+            raise ValueError(f"Unknown mode: {self.mode}")
