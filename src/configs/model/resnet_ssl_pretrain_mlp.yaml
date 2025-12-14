@@ -1,0 +1,3 @@
+_target_: src.model.SimCLR
+encoder: ResNet32
+mode: mlp

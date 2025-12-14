@@ -1,0 +1,5 @@
+_target_: src.model.ProjectedClassifier
+n_class: 20
+encoder: ResNet32
+mode: fixed
+kappa: 1.2
