@@ -74,7 +74,7 @@ Temperature: 0.5
 
 6. SSL experiment: Resnet pretrain on Mnist-on-Cifar10 with SimCLR loss and fixed reweightening proj head with kappa = 1.05:
 
-``` model = SimCLR(encoder = 'ResNet32', mode = 'fixed', kappa = 1.5) ```
+``` model = SimCLR(encoder = 'ResNet32', mode = 'fixed', kappa = 1.05) ```
 ``` criterion = SimCLRLoss(temperature=0.5) ```
 
 ```
@@ -86,3 +86,5 @@ Epochs: 400
 Temperature: 0.5
 Kappa: 1.05 
 ```
+
+In experiments above all classes return features (outputs before projection head) and projections (outputs after projection head) - need to evaluate linear probing with features and projections as outputs for results like in the paper.
