@@ -159,6 +159,8 @@ class BaseTrainer:
         
         if config.trainer.get("linear_probing", False):
             self._setup_linear_probing()
+        
+        self.training_mode = config.trainer.get("training_mode", "supervised")
 
     def train(self):
         """

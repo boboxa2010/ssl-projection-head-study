@@ -37,8 +37,13 @@ class Trainer(BaseTrainer):
             self.optimizer.zero_grad()
 
         with torch.autocast(device_type=self.device, dtype=torch.float16, enabled=self.scaler.is_enabled()):
-            outputs = self.model(**batch)
-            batch.update(outputs)
+            if self.training_mode == "supervised":
+                outputs = self.model(**batch)
+                batch.update(outputs)
+            else:
+                z_i = self.model(batch["aug1"])["projections"]
+                z_j = self.model(batch["aug2"])["projections"]
+                batch.update({"z_i": z_i, "z_j": z_j})
 
             all_losses = self.criterion(**batch)
             batch.update(all_losses)
