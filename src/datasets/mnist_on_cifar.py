@@ -2,7 +2,7 @@ import shutil
 
 import numpy as np
 import safetensors
-import safetensors.torch
+import torch
 import torchvision
 from tqdm.auto import tqdm
 
@@ -29,14 +29,15 @@ class MNISTonCIFARDataset(BaseDataset):
         # each nested dataset class must have an index field that
         # contains list of dicts. Each dict contains information about
         # the object, including label, path, etc.
-        if index_path.exists():
-            index = read_json(str(index_path))
-        else:
-            index = self._create_index(name)
 
         self.s = s
         self.cifar = CIFARDataset("cifar10")
         self.mnist = MNISTDataset()
+
+        if index_path.exists():
+            index = read_json(str(index_path))
+        else:
+            index = self._create_index(name)
 
         super().__init__(index, *args, **kwargs)
 
@@ -64,10 +65,13 @@ class MNISTonCIFARDataset(BaseDataset):
         # but we use wrapper
         for i in tqdm(range(min(len(self.cifar), len(self.mnist)))):
             # create dataset
-            mnist_img, label = self.mnist[i]
-            cifar_img, _ = self.cifar[i]
+            mnist_item = self.mnist[i]
+            cifar_item = self.cifar[i]
 
-            mnist_padded = safetensors.torch.nn.functional.pad(mnist_img, pad=(2, 2, 2, 2, 0, 0))
+            mnist_img, label, _, _ = mnist_item.values()
+            cifar_img, _, _, _ = cifar_item.values()
+
+            mnist_padded = torch.nn.functional.pad(mnist_img, pad=(2, 2, 2, 2, 0, 0))
             mnist_padded = mnist_padded.repeat(3, 1, 1)
             digit_area = (mnist_padded > 0).float()
             cifar_background = cifar_img * (1 - digit_area)
@@ -81,8 +85,6 @@ class MNISTonCIFARDataset(BaseDataset):
 
             # parse dataset metadata and append it to index
             index.append({"path": str(save_path), "label": label})
-
-        shutil.rmtree(data_path / "MNIST")  # remove
 
         # write index to disk
         write_json(index, str(data_path / "index.json"))
