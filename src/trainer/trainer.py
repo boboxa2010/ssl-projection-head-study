@@ -9,6 +9,37 @@ class Trainer(BaseTrainer):
     Trainer class. Defines the logic of batch logging and processing.
     """
 
+    def _from_pretrained(self, pretrained_path):
+        # Need to do this shit for probing fck
+        if hasattr(self.model, "probe_classifier"): # если это моя проба (то есть либо трэйн либо инференс моей пробы)
+
+            pretrained_path = str(pretrained_path)
+            if hasattr(self, "logger"):  # to support both trainer and inferencer
+                self.logger.info(f"Loading model weights from: {pretrained_path} ...")
+            else:
+                print(f"Loading model weights from: {pretrained_path} ...")
+            checkpoint = torch.load(pretrained_path, self.device)
+
+            if checkpoint.get("state_dict") is not None:
+                state_dict = checkpoint["state_dict"]
+            else:
+                state_dict = checkpoint
+
+            keys = list(state_dict.keys())
+            has_classifier = any(k.startswith("probe_classifier.") for k in keys)
+
+            if has_classifier: # то есть это подгрузка чекпоинта пробы уже либо для инференеса либо для продолжения оубучения хз че там внутри
+                self.model.load_state_dict(state_dict) # в точности эта проба 
+            else: # то есть это загрузка модели для пробинга над ней
+                self.model.model.load_state_dict(state_dict)
+            return
+        #иначе я не хочу в этом копаться
+        super()._from_pretrained(pretrained_path)
+
+    def _setup_linear_probing(self):
+        # help me please!
+        return 
+
     def process_batch(self, batch, metrics: MetricTracker):
         """
         Run batch through the model, compute metrics, compute loss,
@@ -37,14 +68,16 @@ class Trainer(BaseTrainer):
             self.optimizer.zero_grad()
 
         with torch.autocast(device_type=self.device, dtype=torch.float16, enabled=self.scaler.is_enabled()):
-            if self.training_mode == "supervised":
+            if self.training_mode == "supervised" or self.training_mode == "probing": # по дефлоту такой же
                 outputs = self.model(**batch)
                 batch.update(outputs)
-            else:
+            elif self.training_mode == "CL": # contrastive loss: SCL or SSL need two augs for SimCLR or SCL
                 z_i = self.model(batch["aug1"])["projections"]
                 z_j = self.model(batch["aug2"])["projections"]
                 batch.update({"z_i": z_i, "z_j": z_j})
-
+            else:
+                print("у тебя там все ок?")
+                
             all_losses = self.criterion(**batch)
             batch.update(all_losses)
 

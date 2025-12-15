@@ -1,11 +1,15 @@
 defaults:
-  - model: resnet
-  - writer: wandb
+  - model: probe_pre_mlp_coarse
+  - writer: cometml
   - metrics: accuracy
-  - datasets: stl_supervised
+  - datasets: cifar100coarse
   - dataloader: main
-  - transforms: main
+  - transforms: cifar100_probing
   - _self_
+
+dataloader:
+  batch_size: 512
+
 optimizer:
   _target_: torch.optim.SGD
   lr: 1e-1
@@ -30,6 +34,6 @@ trainer:
   save_dir: "saved"
   seed: 1
   linear_probing: True
-  from_pretrained: null
-
+  from_pretrained: content/scl_pretrain_resnet_mlp.pth
+  training_mode: "probing"
 
