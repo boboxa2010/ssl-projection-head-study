@@ -13,18 +13,25 @@ class UniversalProjectionHead(nn.Module):
         hidden_dim: int = 512, 
         output_dim: int = 128, # only in MLP
         mode: str = 'mlp',  # mlp or fixed
-        kappa: float | None = None # only in fixed head
+        kappa: float | None = None, # only in fixed head
+        num_layers: float = 2 # for mlp
     ):
         super().__init__()
         self.mode = mode
         self.output_dim = output_dim
 
         if self.mode == 'mlp':
-            self.net = nn.Sequential(
-                nn.Linear(input_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Linear(hidden_dim, output_dim)
-            )
+            layers = []
+            layers.append(nn.Linear(input_dim, hidden_dim))
+            layers.append(nn.BatchNorm1d(hidden_dim))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 2):
+                layers.append(nn.Linear(hidden_dim, hidden_dim))
+                layers.append(nn.BatchNorm1d(hidden_dim))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(hidden_dim, output_dim))
+
+            self.net = nn.Sequential(*layers)
         
         elif self.mode == 'fixed':
             if kappa is None:
