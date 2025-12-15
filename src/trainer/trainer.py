@@ -10,7 +10,14 @@ class Trainer(BaseTrainer):
     """
 
     def _from_pretrained(self, pretrained_path):
-        # Need to do this shit for probing fck
+        """
+        Init model with weights from pretrained pth file.
+
+        Special case for linear probe - so load only backbone without hardcode of backbome (so will work for ViT and others)
+
+        Args:
+            pretrained_path (str): path to the model state dict.
+        """
         if hasattr(self.model, "probe_classifier"): # если это моя проба (то есть либо трэйн либо инференс моей пробы)
 
             pretrained_path = str(pretrained_path)
@@ -33,12 +40,8 @@ class Trainer(BaseTrainer):
             else: # то есть это загрузка модели для пробинга над ней
                 self.model.model.load_state_dict(state_dict)
             return
-        #иначе я не хочу в этом копаться
+        #иначе чтобы не ломать не пробу возвращаю просто родителксьий метод
         super()._from_pretrained(pretrained_path)
-
-    def _setup_linear_probing(self):
-        # help me please!
-        return 
 
     def process_batch(self, batch, metrics: MetricTracker):
         """

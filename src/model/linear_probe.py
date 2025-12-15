@@ -4,7 +4,7 @@ from src.model.proj_clf import ProjectedClassifier
 from src.model.sim_clr import SimCLR
 
 class LinearProbe(nn.Module):
-    def __init__(self, model_type = 'ProjectedClassifier', mode = 'pre', num_classes = 20, head_mode = 'mlp'):
+    def __init__(self, model_type = 'ProjectedClassifier', mode = 'pre', num_classes = 20, head_mode = 'mlp', pretrain_type = 'scl'):
         super(LinearProbe, self).__init__()
         """
         Universal model for linear probing.
@@ -13,15 +13,22 @@ class LinearProbe(nn.Module):
         two modes: 
         'pre' if pre-projections outputs (features)
         'post' if post-projections outputs (projections)
+        pretrain_type: scl, ssl, sl 
         """
-        # Прогоняем одну картинку, чтобы узнать размер (512? 128? 768?)
-        dummy_input = torch.randn(1, 3, 32, 32)
-        self.model = ProjectedClassifier(mode=head_mode) if model_type == "ProjectedClassifier" else SimCLR(mode=head_mode, kappa=2.28) # пока так
-        # потом подгрузится чекпоинт
+        # params are not important because wil be loaded from checkpoint - no learn from scratch
+        if pretrain_type == 'scl':
+            self.model = ProjectedClassifier(mode=head_mode, kappa=2.28)
+        elif pretrain_type == 'sl':
+            self.model = ProjectedClassifier(n_class=20, mode=head_mode, kappa=2.28) # pretrained on coarse everythhing
+        elif pretrain_type == 'ssl':
+            self.model = SimCLR(mode=head_mode, kappa=2.28)
         self.model.eval()
 
         for param in self.model.parameters():
             param.requires_grad = False
+
+        # dummy image to know the output_dim (512? 128? 768?)
+        dummy_input = torch.randn(1, 3, 32, 32)
 
         with torch.no_grad():
             dummy_out = self.model(dummy_input)

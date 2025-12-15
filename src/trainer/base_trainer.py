@@ -157,9 +157,6 @@ class BaseTrainer:
         if config.trainer.get("from_pretrained") is not None:
             self._from_pretrained(config.trainer.get("from_pretrained"))
         
-        if config.trainer.get("linear_probing", False):
-            self._setup_linear_probing()
-        
         self.training_mode = config.trainer.get("training_mode", "supervised")
 
     def train(self):
@@ -583,28 +580,3 @@ class BaseTrainer:
             self.model.load_state_dict(state_dict, strict=False)
         else:
             self.model.load_state_dict(state_dict)
-
-    def _setup_linear_probing(self):
-        """
-        Setup linear probing by freezing all model parameters except
-        the final classifier layer.
-        """
-        if self.config.trainer.get("from_pretrained") is None:
-            raise ValueError(
-                "Linear probing requires 'trainer.from_pretrained' to be set"
-            )
-
-        for param in self.model.parameters():
-            param.requires_grad = False
-        
-        classifier_found = False
-        if hasattr(self.model, 'model') and hasattr(self.model.model, 'fc'):
-            for param in self.model.model.fc.parameters():
-                param.requires_grad = True
-            classifier_found = True
-        elif hasattr(self.model, 'fc'):
-            for param in self.model.fc.parameters():
-                param.requires_grad = True
-            classifier_found = True
-        if not classifier_found:
-            raise ValueError("Could not find classifier layer")
