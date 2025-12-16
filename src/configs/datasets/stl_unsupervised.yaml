@@ -1,0 +1,8 @@
+train:
+  _target_: src.datasets.STLDataset
+  name: "unlabeled"
+  instance_transforms: ${transforms.instance_transforms.train}
+test:
+  _target_: src.datasets.STLDataset
+  name: "test"
+  instance_transforms: ${transforms.instance_transforms.inference}
