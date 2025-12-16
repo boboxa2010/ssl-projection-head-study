@@ -1,0 +1,7 @@
+defaults:
+  - batch_transforms: mnist_on_cifar
+  - _self_
+
+instance_transforms:
+  train: null
+  inference: null
