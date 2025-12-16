@@ -6,7 +6,7 @@ class ViTImg32(nn.Module):
     """
     ViT-Base for CIFAR (32x32).
     """
-    def __init__(self):
+    def __init__(self, depth = None):
         super().__init__()
 
         self.model = torchvision.models.vit_b_16(weights=None)
@@ -22,6 +22,9 @@ class ViTImg32(nn.Module):
 
         # need to chage pos_embed
         self.model.encoder.pos_embedding = nn.Parameter(torch.randn(1, 64 + 1, 768))
+
+        if depth: # depth < 12
+            self.model.encoder.layers = self.model.encoder.layers[:depth]
 
         # was trained on 1000 classes heads = linear(768, 1000) <- don't need it
         self.model.heads = nn.Identity()

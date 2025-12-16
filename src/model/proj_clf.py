@@ -24,7 +24,7 @@ class ProjectedClassifier(nn.Module):
             self.encoder = ResNetImg32()
             input_dim = 512
         elif encoder == 'ViT32':
-            self.encoder = ViTImg32()
+            self.encoder = ViTImg32(depth=6)
             #output - 768 maybe change ViT inside more?
             input_dim = 768
         else:
