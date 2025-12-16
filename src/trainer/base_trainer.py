@@ -380,13 +380,13 @@ class BaseTrainer:
             batch (dict): dict-based batch containing the data from
                 the dataloader (possibly transformed via batch transform).
         """
-        # do batch transforms on device
         transform_type = "train" if self.is_train else "inference"
         transforms = self.batch_transforms.get(transform_type)
+        
         if transforms is not None:
             for transform_name in transforms.keys():
                 batch[transform_name] = transforms[transform_name](
-                    batch[transform_name]
+                    batch[transform_name], **batch
                 )
         return batch
 

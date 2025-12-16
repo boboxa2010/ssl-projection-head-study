@@ -1,6 +1,6 @@
 train:
   img:
-    _target_: torch.nn.Sequential
+    _target_: src.transforms.BatchSequential
     _args_:
       - _target_: torchvision.transforms.v2.ToTensor
       - _target_: torchvision.transforms.v2.Normalize
@@ -9,7 +9,7 @@ train:
 
 inference:
   img: # name of the tensor on which we apply transform
-    _target_: torch.nn.Sequential
+    _target_: src.transforms.BatchSequential
     _args_:
       - _target_: torchvision.transforms.v2.ToTensor
       - _target_: torchvision.transforms.v2.Normalize

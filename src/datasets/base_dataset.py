@@ -46,24 +46,23 @@ class BaseDataset(Dataset):
         """
         Get element from the index, preprocess it, and combine it
         into a dict.
-
-        Notice that the choice of key names is defined by the template user.
-        However, they should be consistent across dataset getitem, collate_fn,
-        loss_function forward method, and model forward method.
-
-        Args:
-            ind (int): index in the self.index list.
-        Returns:
-            instance_data (dict): dict, containing instance
-                (a single dataset element).
         """
         data_dict = self._index[ind]
         data_path = data_dict["path"]
 
-        img = self.load_img(data_path)
+        # Instead of self.load_img(data_path) which returns ["tensor"]
+        # load everything 
+        file_content = safetensors.torch.load_file(data_path)
+        
+        img = file_content["tensor"] # "tensor" есть всегда
         label = data_dict["label"]
 
-        instance_data = {"img": img, "labels": label, "aug1" : img, "aug2" : img}
+        instance_data = {"img": img, "labels": label, "aug1": img, "aug2": img}
+
+        # digit не всегда
+        if "digit" in file_content:
+            instance_data["digit"] = file_content["digit"]
+
         instance_data = self.preprocess_data(instance_data)
 
         return instance_data

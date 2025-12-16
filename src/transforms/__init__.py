@@ -1,5 +1,6 @@
+from src.transforms.base_transforms import BatchSequential
 from src.transforms.lightly import LightlySingleView
-from src.transforms.digitdrop import DropDigit
+from src.transforms.drop_digit import DropDigit
 
-__all__ = ["LightlySingleView", "DropDigit"]
+__all__ = ["BatchSequential", "LightlySingleView", "DropDigit"]
 

@@ -21,6 +21,12 @@ def collate_fn(dataset_items: list[dict]):
     )
     result_batch["labels"] = torch.tensor([elem["labels"] for elem in dataset_items])
 
+    # if for mnist on cifar
+    if "digit" in dataset_items[0]:
+        result_batch["digit"] = torch.cat(
+            [elem["digit"].unsqueeze(0) for elem in dataset_items], dim=0
+        )
+
     # for ssl methods
     result_batch["aug1"] = torch.cat(
         [elem["aug1"].unsqueeze(0) for elem in dataset_items], dim=0
