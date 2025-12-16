@@ -12,7 +12,7 @@ class BarlowTwins(nn.Module):
     def __init__(
             self,
             encoder: str = 'ResNet32',  # or ViT32
-            mode: str = 'mlp',  # mlp or fixed
+            mode: str = 'mlp_barlow',  # mlp or fixed
             kappa: float | None = None  # only in fixed head
     ):
         super().__init__()
@@ -26,7 +26,7 @@ class BarlowTwins(nn.Module):
         else:
             raise ValueError(f"Unknown encoder: {encoder}")
 
-        self.projection_head = UniversalProjectionHead(input_dim, input_dim, 512, mode, kappa, num_layers=3)
+        self.projection_head = UniversalProjectionHead(input_dim, input_dim, 512, mode, kappa)
 
     def forward(self, x: torch.Tensor) -> dict:
         features = self.encoder(x)  # h
