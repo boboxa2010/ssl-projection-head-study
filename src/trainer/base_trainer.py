@@ -367,25 +367,27 @@ class BaseTrainer:
 
     def transform_batch(self, batch):
         """
-        Transforms elements in batch. Unwraps Sequential to support multi-arg layers (DropDigit).
+        Transforms elements in batch. Like instance transform inside the
+        BaseDataset class, but for the whole batch. Improves pipeline speed,
+        especially if used with a GPU.
+
+        Each tensor in a batch undergoes its own transform defined by the key.
+
+        Args:
+            batch (dict): dict-based batch containing the data from
+                the dataloader.
+        Returns:
+            batch (dict): dict-based batch containing the data from
+                the dataloader (possibly transformed via batch transform).
         """
         transform_type = "train" if self.is_train else "inference"
         transforms = self.batch_transforms.get(transform_type)
         
         if transforms is not None:
-            for name, pipeline in transforms.items():
-                # if bellow for mnist on cifar couldn't do it better
-                if isinstance(pipeline, torch.nn.Sequential):
-                    data = batch[name]
-                    for layer in pipeline:
-                        if layer.__class__.__name__ == 'DropDigit':
-                            data = layer(data, batch['digit'])
-                        else:
-                            data = layer(data)
-                    batch[name] = data
-                else:
-                    # for safety
-                    batch[name] = pipeline(batch[name])
+            for transform_name in transforms.keys():
+                batch[transform_name] = transforms[transform_name](
+                    batch[transform_name], **batch
+                )
         return batch
 
     def _clip_grad_norm(self):

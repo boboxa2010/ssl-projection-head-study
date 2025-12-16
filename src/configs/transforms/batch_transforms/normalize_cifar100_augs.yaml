@@ -1,6 +1,6 @@
 train:
   aug1:
-    _target_: torch.nn.Sequential
+    _target_: src.transforms.BatchSequential
     _args_:
       - _target_: torchvision.transforms.v2.RandomResizedCrop
         size: 32
@@ -21,7 +21,7 @@ train:
         mean: [0.5071, 0.4867, 0.4408]
         std: [0.2675, 0.2565, 0.2761]
   aug2:
-    _target_: torch.nn.Sequential
+    _target_: src.transforms.BatchSequential
     _args_:
       - _target_: torchvision.transforms.v2.RandomResizedCrop
         size: 32
@@ -44,7 +44,7 @@ train:
 
 inference:
   img:
-    _target_: torch.nn.Sequential
+    _target_: src.transforms.BatchSequential
     _args_:
       - _target_: torchvision.transforms.v2.ToTensor
       - _target_: torchvision.transforms.v2.Normalize
