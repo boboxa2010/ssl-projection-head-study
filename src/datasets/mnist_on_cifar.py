@@ -79,7 +79,8 @@ class MNISTonCIFARDataset(BaseDataset):
             foreground = self.s * cifar_foreground + (1 - self.s) * mnist_padded
             image = cifar_background + foreground
 
-            save_dict = {"tensor": image}
+            # save digit also (before was just tensor)
+            save_dict = {"tensor": image, "digit": mnist_img}
             save_path = data_path / f"{i:06}.safetensors"
             safetensors.torch.save_file(save_dict, save_path)
 
