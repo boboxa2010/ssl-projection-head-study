@@ -12,7 +12,7 @@ class BarlowTwins(nn.Module):
     def __init__(
             self,
             encoder: str = 'ResNet32',  # or ViT32
-            mode: str = 'mlp_barlow',  # mlp or fixed
+            mode: str = 'mlp_barlow',  # mlp_barlow or fixed
             kappa: float | None = None  # only in fixed head
     ):
         super().__init__()
