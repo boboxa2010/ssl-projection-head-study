@@ -13,7 +13,7 @@ class UniversalProjectionHead(nn.Module):
         hidden_dim: int = 512, 
         output_dim: int = 128, # only in MLP
         mode: str = 'mlp',  # mlp or fixed
-        kappa: float | None = None, # only in fixed head
+        kappa: float | None = None # only in fixed head
     ):
         super().__init__()
         self.mode = mode
