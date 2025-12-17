@@ -7,7 +7,7 @@ train:
       - _target_: torchvision.transforms.v2.RandomGrayscale
         p: 0.2
       - _target_: torchvision.transforms.v2.RandomHorizontalFlip
-      - _target_: torchvision.transforms.v2.RandomGrayscale
+      - _target_: torchvision.transforms.v2.GaussianBlur
         kernel_size: 3
       - _target_: torchvision.transforms.v2.RandomApply
         p: 0.8
@@ -28,7 +28,7 @@ train:
       - _target_: torchvision.transforms.v2.RandomGrayscale
         p: 0.2
       - _target_: torchvision.transforms.v2.RandomHorizontalFlip
-      - _target_: torchvision.transforms.v2.RandomGrayscale
+      - _target_: torchvision.transforms.v2.GaussianBlur
         kernel_size: 3
       - _target_: torchvision.transforms.v2.RandomApply
         p: 0.8
