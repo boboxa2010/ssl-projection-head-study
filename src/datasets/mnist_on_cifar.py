@@ -19,7 +19,7 @@ class MNISTonCIFARDataset(BaseDataset):
     https://yann.lecun.com/exdb/mnist/
     """
 
-    def __init__(self, name="train", s=0.5, *args, **kwargs):
+    def __init__(self, name="train", s=0.7, *args, **kwargs):
         """
         Args:
             name (str): partition name
@@ -76,7 +76,7 @@ class MNISTonCIFARDataset(BaseDataset):
             digit_area = (mnist_padded > 0).float()
             cifar_background = cifar_img * (1 - digit_area)
             cifar_foreground = cifar_img * digit_area
-            foreground = self.s * cifar_foreground + (1 - self.s) * mnist_padded
+            foreground = (1 - self.s) * cifar_foreground + self.s * mnist_padded
             image = cifar_background + foreground
 
             # save digit also (before was just tensor)

@@ -4,11 +4,11 @@ import random
 
 
 class DropDigit(nn.Module):
-    def __init__(self, p=0.5):
+    def __init__(self, p=0.75):
         super().__init__()
         self.p = p
     
-    def forward(self, x, digit, s=0.5, **batch):
+    def forward(self, x, digit, s=0.7, **batch):
         mask = None
         if x.dim() == 3:
             if torch.rand(()) > self.p:
@@ -30,7 +30,7 @@ class DropDigit(nn.Module):
         digit_area = (mnist_padded > 0).float()
         cifar_background = x * (1 - digit_area)
         img_foreground = x * digit_area
-        cifar_foreground = (img_foreground - (1 - s) * mnist_padded) / (s + 1e-5)
+        cifar_foreground = (img_foreground - s * mnist_padded) / (1 - s + 1e-5)
         
         cifar_image = cifar_background + cifar_foreground
         if mask is not None:
