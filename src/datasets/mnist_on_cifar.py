@@ -70,8 +70,9 @@ class MNISTonCIFARDataset(BaseDataset):
 
             mnist_img, label, _, _ = mnist_item.values()
             cifar_img, _, _, _ = cifar_item.values()
-
-            mnist_padded = torch.nn.functional.pad(mnist_img, pad=(2, 2, 2, 2, 0, 0))
+            tr = torchvision.transforms.Resize(16)
+            digit = tr(mnist_img)
+            mnist_padded = torch.nn.functional.pad(digit, pad=(8, 8, 8, 8, 0, 0))
             mnist_padded = mnist_padded.repeat(3, 1, 1)
             digit_area = (mnist_padded > 0).float()
             cifar_background = cifar_img * (1 - digit_area)
